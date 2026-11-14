@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GREEN FUTURE | مساعد قرار الدورة الزراعية</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<h1>🌾 GREEN FUTURE — مساعد قرار الدورة الزراعية الذكية في مصر</h1>
+<p>مدعوم ببيانات أقمار ناسا (POWER, SMAP, ERA5, MODIS) ونماذج التعلم الآلي — أداة داعمة لقرار المزارع وليست بديلاً عن خبرته الحقلية</p>
+</header>
+
+<div class="wrap">
+<aside>
+<div class="card">
+<h2>مدخلات المزارع</h2>
+<label>المحافظة / المنطقة الزراعية<select id="loc"></select></label>
+<label>المحصول السابق في الأرض<select id="prev"><option value="">لا أعرف / لا يوجد</option></select></label>
+<label>أولوية توفير المياه <b id="vw">5</b><input type="range" id="pw" min="0" max="10" value="5"></label>
+<label>أولوية تحسين التربة <b id="vs">5</b><input type="range" id="ps" min="0" max="10" value="5"></label>
+<label>أولوية العائد المتوقع <b id="vy">5</b><input type="range" id="py" min="0" max="10" value="5"></label>
+<label>سيناريو الحرارة <b id="vt">+0°م</b><input type="range" id="st" min="-2" max="5" step="0.5" value="0"></label>
+<label>سيناريو المطر <b id="vr">0%</b><input type="range" id="sr" min="-50" max="30" step="5" value="0"></label>
+<button id="go">قارن الاستراتيجيات</button>
+</div>
+
+<div class="card">
+<h2>حالة الربط مع الفريق</h2>
+<div class="st"><span>قاعدة المحاصيل (51 محصول)</span><span class="dot" id="s-crops">جاري الربط...</span></div>
+<div class="st"><span>بيانات المناخ (NASA/ERA5)</span><span class="dot" id="s-clim">جاري الربط...</span></div>
+<div class="st"><span>نموذج التنبؤ (Gradient Boosting)</span><span class="dot" id="s-pred">جاري الربط...</span></div>
+<div class="st"><span>محرك القرار (MCDA Engine)</span><span class="dot" id="s-eval">جاري الربط...</span></div>
+<div class="st"><span>الخريطة الجغرافية (14 منطقة)</span><span class="dot" id="s-map">جاري الربط...</span></div>
+<label>رابط الـ API<input type="text" id="api" placeholder="http://localhost:8000"></label>
+<button class="sec" id="saveapi">تحديث الاتصال</button>
+</div>
+</aside>
+
+<main>
+<div class="card">
+<h2>مقارنة استراتيجيات الدورة الزراعية (3 مواسم متتالية)</h2>
+<div class="cards" id="cards"></div>
+</div>
+
+<div class="card">
+<h2>الجدول الزمني للدورة</h2>
+<select id="tlsel"></select>
+<div class="legend" style="margin:8px 0"><span><i class="crop"></i>زراعة</span><span><i class="cover"></i>تغطية التربة</span><span><i class="pest"></i>مكافحة وتجهيز</span></div>
+<div class="scroll"><div class="tl" id="tl"></div></div>
+</div>
+
+<div class="card">
+<h2>المناخ والتنبؤ للمحافظة المختارة (رصد ناسا + نطاق عدم اليقين)</h2>
+<select id="var"></select>
+<div class="scroll"><svg id="chart" viewBox="0 0 700 250" width="100%" role="img" aria-label="رسم المناخ"></svg></div>
+<div class="note" id="chartnote"></div>
+</div>
+
+<div class="card">
+<h2>خريطة رطوبة التربة والإجهاد الحراري في مصر (14 منطقة)</h2>
+<iframe id="map" title="الخريطة" srcdoc="<p style='font-family:sans-serif;padding:20px;color:gray'>جاري تحميل الخريطة التفاعلية...</p>"></iframe>
+</div>
+
+<div class="card">
+<h2>افهم أرضك ببساطة</h2>
+<details><summary>رطوبة التربة السطحية (0–7 سم)</summary><p>نسبة الماء في أول طبقة من التربة، وهي اللي بتحس بيها الجذور الصغيرة وقت الزراعة. الرقم تقدير من نموذج ERA5-Land وليس قياساً من حقلك.</p></details>
+<details><summary>شذوذ رطوبة التربة (SMAP)</summary><p>الفرق بين رطوبة التربة الحالية وطبيعتها في نفس الوقت من السنة. لو سالب يبقى الأرض أنشف من المعتاد.</p></details>
+<details><summary>التبخر النتحي المرجعي (ET0)</summary><p>كمية المياه اللي بتروح من الأرض والنبات للجو يومياً بالمم. كل ما زادت زاد احتياج الري.</p></details>
+<details><summary>صافي الميزان المائي</summary><p>المطر ناقص التبخر. الرقم السالب معناه إن الأرض بتخسر مياه ولازم ري يعوّضها.</p></details>
+<details><summary>الفرق بين الأقمار الصناعية والقياس الأرضي</summary><p>الأقمار بتقيس مساحات واسعة (كيلومترات) فبتديك صورة عامة عن المنطقة، أما حقلك ممكن يختلف عنها. القياس الأرضي (جهاز في التربة أو تحليل معمل) أدق لحقلك لكنه محدود المكان.</p></details>
+</div>
+
+<div class="card">
+<h2>قاعدة بيانات المحاصيل الموثقة (51 محصولاً)</h2>
+<div class="scroll" style="max-height:340px;overflow-y:auto"><table id="crops"></table></div>
+</div>
+
+<div class="note">⚠️ <strong>حدود البيانات والمراجعة الحقلية:</strong> الأقمار الصناعية تقيس الرطوبة السطحية والإجهاد الحراري بدقة إقليمية، لكنها لا تقيس ملوحة التربة الحقلية (ECe) أو ملوحة مياه الآبار أو توفر التقاوي محلياً؛ يلزم فحص التربة ومراجعة المهندس الزراعي قبل التنفيذ.</div>
+</main>
+</div>
+
+<button id="help-launcher" class="help-launcher" type="button" aria-label="افتح مساعد استخدام الموقع" aria-expanded="false" aria-controls="help-panel">
+  <span class="help-launcher-icon" aria-hidden="true">؟</span>
+  <span class="help-launcher-label">محتاج مساعدة؟</span>
+</button>
+
+<section id="help-panel" class="help-panel" aria-label="مساعد استخدام الموقع" hidden>
+  <div class="help-header">
+    <div class="help-avatar" aria-hidden="true">🌱</div>
+    <div class="help-heading">
+      <strong>مساعد استخدام الموقع</strong>
+      <small>دليل بسيط خطوة بخطوة</small>
+    </div>
+    <button id="help-close" class="help-close" type="button" aria-label="إغلاق المساعد">×</button>
+  </div>
+  <div id="help-messages" class="help-messages" role="log" aria-live="polite" aria-relevant="additions">
+    <div class="help-message bot">أهلاً بيك 👋<br>أنا هنا أساعدك تستخدم الموقع وتوصل للجزء اللي محتاجه. اختار سؤال من الأسئلة أو اكتب سؤالك.</div>
+    <div class="help-quick" id="help-quick">
+      <button type="button" data-question="إزاي أبدأ استخدام الموقع؟">إزاي أبدأ؟</button>
+      <button type="button" data-question="إزاي أقارن الاستراتيجيات؟">مقارنة الاستراتيجيات</button>
+      <button type="button" data-question="إزاي أفهم الرسم البياني؟">فهم الرسم البياني</button>
+    </div>
+  </div>
+  <form id="help-form" class="help-form">
+    <label class="sr-only" for="help-input">اكتب سؤالك عن استخدام الموقع</label>
+    <input id="help-input" type="text" maxlength="300" autocomplete="off" placeholder="اكتب سؤالك هنا..." />
+    <button type="submit" aria-label="إرسال السؤال">إرسال</button>
+  </form>
+  <p class="help-disclaimer">المساعد يشرح استخدام الموقع فقط، ولا يقدم تشخيصًا أو توصيات زراعية مستقلة.</p>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
