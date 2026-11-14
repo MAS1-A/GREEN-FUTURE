@@ -1,7 +1,6 @@
 ﻿__pycache__/
 *.py[cod]
-.ipynb_checkpoints/
-.env
-*.json
-!crops_database_verified.csv
+*.joblib
+.DS_Store
+Thumbs.db
 .vscode/
