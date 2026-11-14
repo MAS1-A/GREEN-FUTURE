@@ -413,9 +413,8 @@
     <!-- ورقة الطباعة الرسمية PDF -->
     <section id="print-sheet" class="print-only"></section>
   </main>
-
-  <!-- =======================================================================
-       المساعد الزراعي الذكي: المهندس رَيّان (Rayan AI)
+<!-- =======================================================================
+       المساعد الزراعي الذكي: المهندس رَيّان (Rayan AI - محادثة نصية ذكية)
        ======================================================================= -->
   <button id="help-launcher" class="rayan-launcher" type="button" aria-label="المهندس رَيّان - المستشار الزراعي الذكي" aria-expanded="false">
     <div class="rayan-avatar-ring">
@@ -439,7 +438,7 @@
     </div>
     <div class="launcher-text">
       <strong data-i18n="bot_btn">اسأل المهندس رَيّان</strong>
-      <small>مستشار ذكي • صوت وكتابة</small>
+      <small>مستشار زراعي ذكي • متصل بأرضك</small>
     </div>
   </button>
 
@@ -471,7 +470,6 @@
         </div>
       </div>
       <div class="rayan-header-actions">
-        <button id="auto-tts-toggle" class="rayan-icon-btn" type="button" title="تفعيل/إيقاف القراءة الصوتية التلقائية">🔇</button>
         <button id="clear-chat-btn" class="rayan-icon-btn" type="button" title="محادثة جديدة">🗑️</button>
         <button id="help-close" class="rayan-icon-btn" type="button" aria-label="إغلاق">✕</button>
       </div>
@@ -481,7 +479,7 @@
       <div class="rayan-msg bot">
         <div class="msg-bubble">
           أهلاً بك يا هندسة / يا حاج 🌾 أنا <b>المهندس رَيّان</b>، مستشارك الزراعي الذكي في منصة <b>GREEN FUTURE</b>.<br>
-          أنا متصل الآن مباشرة ببيانات محافظتك، مساحتك، وقاعدة الـ 51 محصولاً. اسألني أي سؤال بحرية أو اضغط <b>🎤</b> وتحدث بصوتك!
+          أنا متصل الآن مباشرة ببيانات محافظتك، مساحتك، وقاعدة الـ 51 محصولاً. اكتب سؤالك وسأجيبك فوراً بالأرقام والتفاصيل!
         </div>
       </div>
       <div class="rayan-chips" id="help-quick">
@@ -492,20 +490,13 @@
       </div>
     </div>
 
-    <div id="voice-status" class="rayan-voice-bar" hidden>
-      <span class="wave-bars"><i></i><i></i><i></i><i></i></span>
-      <span>جاري الاستماع لصوتك... تحدث الآن</span>
-    </div>
-
     <form id="help-form" class="rayan-footer">
-      <button type="button" id="voice-mic-btn" class="rayan-mic-btn" title="تحدث بصوتك">🎤</button>
-      <input id="help-input" type="text" maxlength="600" autocomplete="off" placeholder="اكتب سؤالك للمهندس رَيّان أو اضغط 🎤..." />
+      <input id="help-input" type="text" maxlength="600" autocomplete="off" placeholder="اكتب سؤالك الزراعي للمهندس رَيّان هنا..." />
       <button type="submit" class="rayan-send-btn" title="إرسال">➤</button>
     </form>
   </section>
 
-  <!-- محرك الصوت العربي الاحترافي + سكريبت المنصة -->
-  <script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE" defer></script>
   <script src="app.js"></script>
 </body>
+</html>
 </html>
