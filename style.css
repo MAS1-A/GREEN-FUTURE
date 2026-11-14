@@ -1532,3 +1532,30 @@ th {
     print-color-adjust: exact;
   }
 }
+
+
+/* ==========================================================================
+   حل تداخل زر الشات مع الأزرار والنصوص في وضع الهاتف
+   ========================================================================== */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 95px !important;
+  }
+
+  .rayan-launcher {
+    padding: 6px !important;
+    border-radius: 50% !important;
+    bottom: 16px !important;
+    inset-inline-end: 16px !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .rayan-launcher .launcher-text {
+    display: none !important;
+  }
+
+  .rayan-launcher .rayan-avatar-ring {
+    width: 48px !important;
+    height: 48px !important;
+  }
+}
