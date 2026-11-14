@@ -6,20 +6,26 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.7 "Segoe UI",Tahoma,Arial,sans-serif}
 header{background:var(--ac);color:#fff;padding:16px 20px}
+.header-inner{max-width:1320px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 header h1{margin:0;font-size:1.3rem}header p{margin:2px 0 0;opacity:.9;font-size:.9rem}
+.theme-btn{width:auto;margin:0;background:#ffffff24;border:1px solid #ffffff55;padding:7px 14px;border-radius:999px;font-size:.85rem}
 .wrap{display:grid;grid-template-columns:300px 1fr;gap:16px;padding:16px;max-width:1320px;margin:auto}
 @media(max-width:820px){.wrap{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
 .card h2{margin:0 0 10px;font-size:1.05rem}
 label{display:block;font-size:.9rem;margin-top:10px}
 label b{float:left;color:var(--ac)}
-select,input[type=text],input[type=file]{width:100%;padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+select,input[type=text]{width:100%;padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
 input[type=range]{width:100%;accent-color:var(--ac)}
 button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:9px 14px;font:inherit;cursor:pointer;width:100%;margin-top:12px}
-button.sec{background:transparent;color:var(--ac);border:1px solid var(--ac);margin-top:6px}
 .st{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;padding:4px 0;border-bottom:1px dashed var(--bd)}
 .dot{padding:1px 8px;border-radius:10px;font-size:.75rem;background:var(--warn);color:var(--tx)}
 .dot.on{background:var(--ac);color:#fff}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px}
+.kpi-card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;display:flex;flex-direction:column}
+.kpi-card small{color:var(--mu);font-size:.82rem}
+.kpi-card strong{font-size:1.35rem;color:var(--ac);margin:2px 0}
+.kpi-card span{font-size:.78rem;color:var(--mu)}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 .sc{border:2px solid var(--bd);border-radius:12px;padding:12px;background:var(--card)}
 .sc.best{border-color:var(--ac);box-shadow:0 4px 16px #2f7d4f22}

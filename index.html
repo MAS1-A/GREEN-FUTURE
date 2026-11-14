@@ -3,19 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>GREEN FUTURE | مساعد قرار الدورة الزراعية</title>
+<title>GREEN FUTURE | مساعد قرار الدورة الزراعية في مصر</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
-<h1>🌾 GREEN FUTURE — مساعد قرار الدورة الزراعية الذكية في مصر</h1>
-<p>مدعوم ببيانات أقمار ناسا (POWER, SMAP, ERA5, MODIS) ونماذج التعلم الآلي — أداة داعمة لقرار المزارع وليست بديلاً عن خبرته الحقلية</p>
+  <div class="header-inner">
+    <div>
+      <h1>🌾 GREEN FUTURE — مساعد قرار الدورة الزراعية الذكية في مصر</h1>
+      <p>مدعوم ببيانات أقمار ناسا (POWER, SMAP, ERA5, MODIS) ونماذج التعلم الآلي — فريق ZERO SHOT (NASA Space Apps Zagazig)</p>
+    </div>
+    <button id="theme-toggle" class="theme-btn" type="button" aria-label="تبديل المظهر">🌓 تبديل المظهر</button>
+  </div>
 </header>
 
 <div class="wrap">
 <aside>
 <div class="card">
-<h2>مدخلات المزارع</h2>
+<h2>مدخلات المزارع والسيناريو</h2>
 <label>المحافظة / المنطقة الزراعية<select id="loc"></select></label>
 <label>المحصول السابق في الأرض<select id="prev"><option value="">لا أعرف / لا يوجد</option></select></label>
 <label>أولوية توفير المياه <b id="vw">5</b><input type="range" id="pw" min="0" max="10" value="5"></label>
@@ -27,25 +32,30 @@
 </div>
 
 <div class="card">
-<h2>حالة الربط مع الفريق</h2>
-<div class="st"><span>قاعدة المحاصيل (51 محصول)</span><span class="dot" id="s-crops">جاري الربط...</span></div>
-<div class="st"><span>بيانات المناخ (NASA/ERA5)</span><span class="dot" id="s-clim">جاري الربط...</span></div>
-<div class="st"><span>نموذج التنبؤ (Gradient Boosting)</span><span class="dot" id="s-pred">جاري الربط...</span></div>
-<div class="st"><span>محرك القرار (MCDA Engine)</span><span class="dot" id="s-eval">جاري الربط...</span></div>
-<div class="st"><span>الخريطة الجغرافية (14 منطقة)</span><span class="dot" id="s-map">جاري الربط...</span></div>
-<label>رابط الـ API<input type="text" id="api" placeholder="http://localhost:8000"></label>
-<button class="sec" id="saveapi">تحديث الاتصال</button>
+<h2>حالة البيانات والنماذج المدمجة</h2>
+<div class="st"><span>قاعدة المحاصيل (51 محصول)</span><span class="dot" id="s-crops">جاري التحميل...</span></div>
+<div class="st"><span>بيانات المناخ (NASA/ERA5)</span><span class="dot" id="s-clim">جاري التحميل...</span></div>
+<div class="st"><span>تنبؤات الذكاء الاصطناعي (R²=87%)</span><span class="dot" id="s-pred">جاري التحميل...</span></div>
+<div class="st"><span>محرك القرار العلمي (MCDA)</span><span class="dot on" id="s-eval">جاهز (51 محصول)</span></div>
+<div class="st"><span>الخريطة الجغرافية (14 منطقة)</span><span class="dot" id="s-map">جاري التحميل...</span></div>
 </div>
 </aside>
 
 <main>
+<div class="kpi-grid" id="kpis">
+  <div class="kpi-card"><small>💧 رطوبة التربة المتوقعة</small><strong id="kpi-sm">--</strong><span id="kpi-unc">نطاق عدم اليقين: --</span></div>
+  <div class="kpi-card"><small>🌡️ الحرارة العظمى المتوقعة</small><strong id="kpi-tmax">--</strong><span id="kpi-scen">السيناريو الحالي</span></div>
+  <div class="kpi-card"><small>🧪 خصائص التربة السطحية</small><strong id="kpi-soil">--</strong><span id="kpi-clay">نسبة الطين: --</span></div>
+  <div class="kpi-card"><small>🏆 أفضل دورة مقترحة</small><strong id="kpi-best">--</strong><span id="kpi-save">التوفير المائي: --</span></div>
+</div>
+
 <div class="card">
 <h2>مقارنة استراتيجيات الدورة الزراعية (3 مواسم متتالية)</h2>
 <div class="cards" id="cards"></div>
 </div>
 
 <div class="card">
-<h2>الجدول الزمني للدورة</h2>
+<h2>الجدول الزمني للدورة (12 شهراً)</h2>
 <select id="tlsel"></select>
 <div class="legend" style="margin:8px 0"><span><i class="crop"></i>زراعة</span><span><i class="cover"></i>تغطية التربة</span><span><i class="pest"></i>مكافحة وتجهيز</span></div>
 <div class="scroll"><div class="tl" id="tl"></div></div>
@@ -60,7 +70,7 @@
 
 <div class="card">
 <h2>خريطة رطوبة التربة والإجهاد الحراري في مصر (14 منطقة)</h2>
-<iframe id="map" title="الخريطة" srcdoc="<p style='font-family:sans-serif;padding:20px;color:gray'>جاري تحميل الخريطة التفاعلية...</p>"></iframe>
+<iframe id="map" title="الخريطة" src="data/map.html"></iframe>
 </div>
 
 <div class="card">
@@ -73,8 +83,9 @@
 </div>
 
 <div class="card">
-<h2>قاعدة بيانات المحاصيل الموثقة (51 محصولاً)</h2>
-<div class="scroll" style="max-height:340px;overflow-y:auto"><table id="crops"></table></div>
+<h2>قاعدة بيانات المحاصيل الموثقة (51 محصولاً مصرياً)</h2>
+<input type="text" id="crop-search" placeholder="🔍 ابحث باسم المحصول أو العائلة النباتية أو الموسم..." style="margin-bottom:10px">
+<div class="scroll" style="max-height:360px;overflow-y:auto"><table id="crops"></table></div>
 </div>
 
 <div class="note">⚠️ <strong>حدود البيانات والمراجعة الحقلية:</strong> الأقمار الصناعية تقيس الرطوبة السطحية والإجهاد الحراري بدقة إقليمية، لكنها لا تقيس ملوحة التربة الحقلية (ECe) أو ملوحة مياه الآبار أو توفر التقاوي محلياً؛ يلزم فحص التربة ومراجعة المهندس الزراعي قبل التنفيذ.</div>
