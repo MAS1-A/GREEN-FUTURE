@@ -1,127 +1,511 @@
 ﻿<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="dark">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>GREEN FUTURE | مساعد قرار الدورة الزراعية في مصر</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>GREEN FUTURE | منصة الذكاء الزراعي ورصد الأرض - مصر</title>
+  <link rel="icon" type="image/png" href="assets/logo-avatar.png" />
+
+  <!-- الخطوط العربية والإنجليزية الاحترافية -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- مكتبة الخرائط الفضائية التفاعلية Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- مكتبة الرسوم البيانية التفاعلية Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header>
-  <div class="header-inner">
-    <div>
-      <h1>🌾 GREEN FUTURE — مساعد قرار الدورة الزراعية الذكية في مصر</h1>
-      <p>مدعوم ببيانات أقمار ناسا (POWER, SMAP, ERA5, MODIS) ونماذج التعلم الآلي — فريق ZERO SHOT (NASA Space Apps Zagazig)</p>
+
+  <!-- =======================================================================
+       الشريط العلوي الرئيسي (Header)
+       ======================================================================= -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-logo-wrap">
+          <img
+            src="assets/logo-avatar.png"
+            alt="GREEN FUTURE Logo"
+            class="brand-avatar-img"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='grid';"
+          />
+          <span class="brand-fallback-icon" style="display:none;">🌱</span>
+        </div>
+        <div class="brand-text">
+          <h1 data-i18n="brand_title">GREEN FUTURE</h1>
+          <p data-i18n="brand_sub">منصة الذكاء الزراعي ورصد الأرض (NASA Earth Observation) • فريق ZERO SHOT</p>
+        </div>
+      </div>
+
+      <div class="topbar-controls">
+        <button id="nav-science-btn" class="pill-btn accent-outline" type="button" data-i18n="btn_science_lab">
+          🗺️ الخرائط والمختبر العلمي
+        </button>
+        <button id="lang-toggle" class="pill-btn" type="button">
+          🌐 <span id="lang-label">English</span>
+        </button>
+        <button id="theme-toggle" class="pill-btn" type="button">
+          <span id="theme-icon">🌙</span> <span id="theme-label" data-i18n="theme_dark">ليلي</span>
+        </button>
+      </div>
     </div>
-    <button id="theme-toggle" class="theme-btn" type="button" aria-label="تبديل المظهر">🌓 تبديل المظهر</button>
-  </div>
-</header>
+  </header>
 
-<div class="wrap">
-<aside>
-<div class="card">
-<h2>مدخلات المزارع والسيناريو</h2>
-<label>المحافظة / المنطقة الزراعية<select id="loc"></select></label>
-<label>المحصول السابق في الأرض<select id="prev"><option value="">لا أعرف / لا يوجد</option></select></label>
-<label>أولوية توفير المياه <b id="vw">5</b><input type="range" id="pw" min="0" max="10" value="5"></label>
-<label>أولوية تحسين التربة <b id="vs">5</b><input type="range" id="ps" min="0" max="10" value="5"></label>
-<label>أولوية العائد المتوقع <b id="vy">5</b><input type="range" id="py" min="0" max="10" value="5"></label>
-<label>سيناريو الحرارة <b id="vt">+0°م</b><input type="range" id="st" min="-2" max="5" step="0.5" value="0"></label>
-<label>سيناريو المطر <b id="vr">0%</b><input type="range" id="sr" min="-50" max="30" step="5" value="0"></label>
-<button id="go">قارن الاستراتيجيات</button>
-</div>
-
-<div class="card">
-<h2>حالة البيانات والنماذج المدمجة</h2>
-<div class="st"><span>قاعدة المحاصيل (51 محصول)</span><span class="dot" id="s-crops">جاري التحميل...</span></div>
-<div class="st"><span>بيانات المناخ (NASA/ERA5)</span><span class="dot" id="s-clim">جاري التحميل...</span></div>
-<div class="st"><span>تنبؤات الذكاء الاصطناعي (R²=87%)</span><span class="dot" id="s-pred">جاري التحميل...</span></div>
-<div class="st"><span>محرك القرار العلمي (MCDA)</span><span class="dot on" id="s-eval">جاهز (51 محصول)</span></div>
-<div class="st"><span>الخريطة الجغرافية (14 منطقة)</span><span class="dot" id="s-map">جاري التحميل...</span></div>
-</div>
-</aside>
-
-<main>
-<div class="kpi-grid" id="kpis">
-  <div class="kpi-card"><small>💧 رطوبة التربة المتوقعة</small><strong id="kpi-sm">--</strong><span id="kpi-unc">نطاق عدم اليقين: --</span></div>
-  <div class="kpi-card"><small>🌡️ الحرارة العظمى المتوقعة</small><strong id="kpi-tmax">--</strong><span id="kpi-scen">السيناريو الحالي</span></div>
-  <div class="kpi-card"><small>🧪 خصائص التربة السطحية</small><strong id="kpi-soil">--</strong><span id="kpi-clay">نسبة الطين: --</span></div>
-  <div class="kpi-card"><small>🏆 أفضل دورة مقترحة</small><strong id="kpi-best">--</strong><span id="kpi-save">التوفير المائي: --</span></div>
-</div>
-
-<div class="card">
-<h2>مقارنة استراتيجيات الدورة الزراعية (3 مواسم متتالية)</h2>
-<div class="cards" id="cards"></div>
-</div>
-
-<div class="card">
-<h2>الجدول الزمني للدورة (12 شهراً)</h2>
-<select id="tlsel"></select>
-<div class="legend" style="margin:8px 0"><span><i class="crop"></i>زراعة</span><span><i class="cover"></i>تغطية التربة</span><span><i class="pest"></i>مكافحة وتجهيز</span></div>
-<div class="scroll"><div class="tl" id="tl"></div></div>
-</div>
-
-<div class="card">
-<h2>المناخ والتنبؤ للمحافظة المختارة (رصد ناسا + نطاق عدم اليقين)</h2>
-<select id="var"></select>
-<div class="scroll"><svg id="chart" viewBox="0 0 700 250" width="100%" role="img" aria-label="رسم المناخ"></svg></div>
-<div class="note" id="chartnote"></div>
-</div>
-
-<div class="card">
-<h2>خريطة رطوبة التربة والإجهاد الحراري في مصر (14 منطقة)</h2>
-<iframe id="map" title="الخريطة" src="data/map.html"></iframe>
-</div>
-
-<div class="card">
-<h2>افهم أرضك ببساطة</h2>
-<details><summary>رطوبة التربة السطحية (0–7 سم)</summary><p>نسبة الماء في أول طبقة من التربة، وهي اللي بتحس بيها الجذور الصغيرة وقت الزراعة. الرقم تقدير من نموذج ERA5-Land وليس قياساً من حقلك.</p></details>
-<details><summary>شذوذ رطوبة التربة (SMAP)</summary><p>الفرق بين رطوبة التربة الحالية وطبيعتها في نفس الوقت من السنة. لو سالب يبقى الأرض أنشف من المعتاد.</p></details>
-<details><summary>التبخر النتحي المرجعي (ET0)</summary><p>كمية المياه اللي بتروح من الأرض والنبات للجو يومياً بالمم. كل ما زادت زاد احتياج الري.</p></details>
-<details><summary>صافي الميزان المائي</summary><p>المطر ناقص التبخر. الرقم السالب معناه إن الأرض بتخسر مياه ولازم ري يعوّضها.</p></details>
-<details><summary>الفرق بين الأقمار الصناعية والقياس الأرضي</summary><p>الأقمار بتقيس مساحات واسعة (كيلومترات) فبتديك صورة عامة عن المنطقة، أما حقلك ممكن يختلف عنها. القياس الأرضي (جهاز في التربة أو تحليل معمل) أدق لحقلك لكنه محدود المكان.</p></details>
-</div>
-
-<div class="card">
-<h2>قاعدة بيانات المحاصيل الموثقة (51 محصولاً مصرياً)</h2>
-<input type="text" id="crop-search" placeholder="🔍 ابحث باسم المحصول أو العائلة النباتية أو الموسم..." style="margin-bottom:10px">
-<div class="scroll" style="max-height:360px;overflow-y:auto"><table id="crops"></table></div>
-</div>
-
-<div class="note">⚠️ <strong>حدود البيانات والمراجعة الحقلية:</strong> الأقمار الصناعية تقيس الرطوبة السطحية والإجهاد الحراري بدقة إقليمية، لكنها لا تقيس ملوحة التربة الحقلية (ECe) أو ملوحة مياه الآبار أو توفر التقاوي محلياً؛ يلزم فحص التربة ومراجعة المهندس الزراعي قبل التنفيذ.</div>
-</main>
-</div>
-
-<button id="help-launcher" class="help-launcher" type="button" aria-label="افتح مساعد استخدام الموقع" aria-expanded="false" aria-controls="help-panel">
-  <span class="help-launcher-icon" aria-hidden="true">؟</span>
-  <span class="help-launcher-label">محتاج مساعدة؟</span>
-</button>
-
-<section id="help-panel" class="help-panel" aria-label="مساعد استخدام الموقع" hidden>
-  <div class="help-header">
-    <div class="help-avatar" aria-hidden="true">🌱</div>
-    <div class="help-heading">
-      <strong>مساعد استخدام الموقع</strong>
-      <small>دليل بسيط خطوة بخطوة</small>
+  <!-- =======================================================================
+       شريط التنقل والمراحل الأربع (Wizard Navigation)
+       ======================================================================= -->
+  <nav class="progress-bar-wrap" aria-label="مراحل التخطيط الزراعي">
+    <div class="container">
+      <div class="wizard-steps">
+        <button type="button" class="w-step active" id="ind-1" data-goto="1">
+          <span class="w-circle">1</span>
+          <span data-i18n="st_1">بيانات الأرض</span>
+        </button>
+        <div class="w-connector" id="conn-1"></div>
+        <button type="button" class="w-step" id="ind-2" data-goto="2">
+          <span class="w-circle">2</span>
+          <span data-i18n="st_2">الأهداف والقيود</span>
+        </button>
+        <div class="w-connector" id="conn-2"></div>
+        <button type="button" class="w-step" id="ind-3" data-goto="3">
+          <span class="w-circle">3</span>
+          <span data-i18n="st_3">خطتك المخصصة</span>
+        </button>
+        <div class="w-connector" id="conn-3"></div>
+        <button type="button" class="w-step" id="ind-4" data-goto="4">
+          <span class="w-circle">4</span>
+          <span data-i18n="st_4">الخرائط والعلوم</span>
+        </button>
+      </div>
     </div>
-    <button id="help-close" class="help-close" type="button" aria-label="إغلاق المساعد">×</button>
-  </div>
-  <div id="help-messages" class="help-messages" role="log" aria-live="polite" aria-relevant="additions">
-    <div class="help-message bot">أهلاً بيك 👋<br>أنا هنا أساعدك تستخدم الموقع وتوصل للجزء اللي محتاجه. اختار سؤال من الأسئلة أو اكتب سؤالك.</div>
-    <div class="help-quick" id="help-quick">
-      <button type="button" data-question="إزاي أبدأ استخدام الموقع؟">إزاي أبدأ؟</button>
-      <button type="button" data-question="إزاي أقارن الاستراتيجيات؟">مقارنة الاستراتيجيات</button>
-      <button type="button" data-question="إزاي أفهم الرسم البياني؟">فهم الرسم البياني</button>
-    </div>
-  </div>
-  <form id="help-form" class="help-form">
-    <label class="sr-only" for="help-input">اكتب سؤالك عن استخدام الموقع</label>
-    <input id="help-input" type="text" maxlength="300" autocomplete="off" placeholder="اكتب سؤالك هنا..." />
-    <button type="submit" aria-label="إرسال السؤال">إرسال</button>
-  </form>
-  <p class="help-disclaimer">المساعد يشرح استخدام الموقع فقط، ولا يقدم تشخيصًا أو توصيات زراعية مستقلة.</p>
-</section>
+  </nav>
 
-<script src="app.js"></script>
+  <!-- =======================================================================
+       المحتوى الرئيسي (الشاشات الأربع المستقلة)
+       ======================================================================= -->
+  <main class="container page-container">
+
+    <!-- الشاشة 1: إدخال بيانات الأرض -->
+    <section class="wizard-screen active" id="screen-1">
+      <div class="screen-card centered-card">
+        <div class="screen-head">
+          <span class="step-tag" data-i18n="s1_tag">المرحلة 1 من 3 • تعريف الحقل</span>
+          <h2 data-i18n="s1_title">أخبرنا عن أرضك لنبدأ تحليل بيانات أقمار ناسا</h2>
+          <p data-i18n="s1_desc">يتم ربط موقع أرضك مع 10 سنوات من بيانات الأقمار الصناعية (SMAP, POWER, ERA5, MODIS) لتحليل الرطوبة والإجهاد الحراري بدقة.</p>
+        </div>
+
+        <div class="form-2col">
+          <div class="input-group">
+            <label for="loc" data-i18n="lbl_gov">1. المحافظة / المنطقة الزراعية *</label>
+            <select id="loc" required></select>
+          </div>
+
+          <div class="input-group">
+            <label for="area-feddan" data-i18n="lbl_area">2. مساحة الأرض (بالفدان) *</label>
+            <input type="number" id="area-feddan" min="0.5" max="5000" step="0.5" value="5" required />
+          </div>
+
+          <div class="input-group">
+            <label for="prev" data-i18n="lbl_prev">3. المحصول المزروع حالياً أو السابق *</label>
+            <select id="prev" required></select>
+          </div>
+
+          <div class="input-group">
+            <label for="lookback-window" data-i18n="lbl_window">4. فترة المرجع الزمني للرصد الفضائي *</label>
+            <select id="lookback-window">
+              <option value="today" data-i18n="win_today">اليوم الحالي (أحدث رصد متاح)</option>
+              <option value="week" selected data-i18n="win_week">آخر أسبوع (متوسط 7 أيام)</option>
+              <option value="month" data-i18n="win_month">آخر شهر (اتجاه 30 يوماً)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="preview-banner" id="gov-preview-box">
+          <div class="preview-item">
+            <small data-i18n="prev_soil_type">طبيعة التربة السائدة</small>
+            <strong id="prev-soil-info">طينية طميية (pH 7.9)</strong>
+          </div>
+          <div class="preview-item">
+            <small data-i18n="prev_sm">رطوبة التربة المرجعية</small>
+            <strong id="prev-sm-info">-- m³/m³</strong>
+          </div>
+          <div class="preview-item">
+            <small data-i18n="prev_temp">الحرارة العظمى المرجعية</small>
+            <strong id="prev-temp-info">-- °C</strong>
+          </div>
+        </div>
+
+        <div class="validation-msg" id="err-step-1" hidden></div>
+
+        <div class="screen-footer end">
+          <button type="button" class="btn-next" id="to-step-2" data-i18n="btn_next_2">
+            التالي: تحديد أهدافك وقيود المزرعة ⬅️
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- الشاشة 2: الأهداف والقيود الحقلية وسيناريو الطقس -->
+    <section class="wizard-screen" id="screen-2">
+      <div class="screen-card centered-card">
+        <div class="screen-head">
+          <span class="step-tag" data-i18n="s2_tag">المرحلة 2 من 3 • تخصيص القرار للمزارع</span>
+          <h2 data-i18n="s2_title">ما هو هدفك الأساسي وما هي ظروف مزرعتك؟</h2>
+          <p data-i18n="s2_desc">لن نعرض لك خطة موحدة للجميع؛ سيقوم المحرك بتصميم 3 دورات زراعية مخصصة من 51 محصولاً تناسب قيودك وأولوياتك.</p>
+        </div>
+
+        <label class="section-lbl" data-i18n="lbl_main_goal">1. اختر أولويتك القصوى للموسم القادم:</label>
+        <div class="goal-cards" id="goal-selector">
+          <button type="button" class="goal-card active" data-goal="water">
+            <span class="g-icon">💧</span>
+            <strong data-i18n="g_water_t">توفير مياه الري</strong>
+            <small data-i18n="g_water_d">محاصيل قليلة الاستهلاك المائي وتتحمل الجفاف</small>
+          </button>
+          <button type="button" class="goal-card" data-goal="soil">
+            <span class="g-icon">🌱</span>
+            <strong data-i18n="g_soil_t">إصلاح التربة والخصوبة</strong>
+            <small data-i18n="g_soil_d">تثبيت النيتروجين طبيعياً وتقليل الأسمدة وكسر الآفات</small>
+          </button>
+          <button type="button" class="goal-card" data-goal="profit">
+            <span class="g-icon">💰</span>
+            <strong data-i18n="g_profit_t">تعظيم العائد التسويقي</strong>
+            <small data-i18n="g_profit_d">محاصيل نقدية وتصديرية ذات طلب مرتفع في السوق</small>
+          </button>
+          <button type="button" class="goal-card" data-goal="balanced">
+            <span class="g-icon">⚖️</span>
+            <strong data-i18n="g_bal_t">توازن شامل (مياه + تربة + ربح)</strong>
+            <small data-i18n="g_bal_d">توزيع متوازن يضمن الاستدامة والأمان المالي</small>
+          </button>
+        </div>
+
+        <div class="form-3col mt-24">
+          <div class="input-group">
+            <label for="water-avail" data-i18n="lbl_water_avail">2. توفر مياه الري في أرضك</label>
+            <select id="water-avail">
+              <option value="normal" data-i18n="wa_norm">ري منتظم (نهايات ترع جيدة / نيلي)</option>
+              <option value="limited" selected data-i18n="wa_lim">مناوبات ري متباعدة / نقص مياه</option>
+              <option value="saline_well" data-i18n="wa_sal">مياه آبار أو تربة متوسطة الملوحة</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="equip-level" data-i18n="lbl_equip">3. مستوى الميكنة والعمالة</label>
+            <select id="equip-level">
+              <option value="standard" selected data-i18n="eq_std">ميكنة تقليدية (جرار وحرث عادي)</option>
+              <option value="modern" data-i18n="eq_mod">ميكنة حديثة وتسوية بالليزر</option>
+              <option value="manual" data-i18n="eq_man">اعتماد أكبر على العمالة اليدوية</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="market-pref" data-i18n="lbl_market">4. تفضيل التسويق والبيع</label>
+            <select id="market-pref">
+              <option value="local" selected data-i18n="mk_loc">محاصيل استراتيجية مضمونة البيع محلياً</option>
+              <option value="cash" data-i18n="mk_cash">محاصيل تصنيعية وتصديرية (زيوت/بقول)</option>
+              <option value="forage" data-i18n="mk_for">توفير أعلاف خضراء للمواشي بجانب المحصول</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="climate-sim-box mt-24">
+          <div class="sim-header">
+            <strong data-i18n="sim_title">🌡️ محاكي سيناريو الطقس للموسم القادم (90 يوماً)</strong>
+            <span class="sim-badge" id="sim-summary-text">+1.0°C | -10% أمطار</span>
+          </div>
+          <div class="form-2col">
+            <div class="slider-field">
+              <div class="slider-lbl">
+                <span data-i18n="scen_temp">تغير درجة الحرارة المتوقع</span>
+                <strong id="vt">+1.0°C</strong>
+              </div>
+              <input type="range" id="st" min="-2" max="5" step="0.5" value="1" />
+            </div>
+            <div class="slider-field">
+              <div class="slider-lbl">
+                <span data-i18n="scen_rain">تغير معدل الأمطار</span>
+                <strong id="vr">-10%</strong>
+              </div>
+              <input type="range" id="sr" min="-50" max="30" step="5" value="-10" />
+            </div>
+          </div>
+        </div>
+
+        <div class="screen-footer between">
+          <button type="button" class="btn-back" id="back-to-1" data-i18n="btn_back_1">
+            ➡️ السابق: تعديل بيانات الأرض
+          </button>
+          <button type="button" class="btn-next" id="to-step-3" data-i18n="btn_generate_plan">
+            🚀 توليد خطتي الزراعية المخصصة الآن
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- الشاشة 3: النتائج المخصصة للمزارع -->
+    <section class="wizard-screen" id="screen-3">
+      <div class="results-header-bar">
+        <div>
+          <span class="step-tag" data-i18n="s3_tag">المرحلة 3 من 3 • التوصية المخصصة لأرضك</span>
+          <h2 id="custom-plan-headline">الخطة الزراعية المقترحة</h2>
+        </div>
+        <div class="results-actions">
+          <button type="button" class="btn-outline" id="back-to-2" data-i18n="btn_edit_prefs">✏️ تعديل الأهداف</button>
+          <button type="button" class="btn-outline" id="goto-science-from-3" data-i18n="btn_view_maps">🗺️ عرض الخرائط والرسوم</button>
+          <button type="button" class="btn-primary-sm" id="btn-print" data-i18n="btn_print_pdf">🖨️ طباعة الروشتة (PDF)</button>
+        </div>
+      </div>
+
+      <div class="summary-strip">
+        <div class="sum-box">
+          <span class="sum-icon">🛰️</span>
+          <div>
+            <small data-i18n="sum_sm_lbl">رطوبة التربة (المرجع ➔ التوقع الموسمي)</small>
+            <strong id="res-sm">--</strong>
+            <em id="res-sm-meaning">--</em>
+          </div>
+        </div>
+        <div class="sum-box">
+          <span class="sum-icon">🌡️</span>
+          <div>
+            <small data-i18n="sum_temp_lbl">الحرارة العظمى المتوقعة للموسم</small>
+            <strong id="res-tmax">--</strong>
+            <em id="res-temp-meaning">--</em>
+          </div>
+        </div>
+        <div class="sum-box highlight">
+          <span class="sum-icon">💧</span>
+          <div>
+            <small data-i18n="sum_save_lbl">الأثر المتوقع لأفضل دورة مخصصة لك</small>
+            <strong id="res-impact">--</strong>
+            <em id="res-impact-sub">--</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-subhead">
+        <h3 data-i18n="custom_cards_title">🌾 دورات زراعية صُممت خصيصاً لظروف أرضك (مقارنة بالدورة التقليدية)</h3>
+        <p data-i18n="custom_cards_sub">تم اختيار المحاصيل آلياً من قاعدة الـ 51 محصولاً لتوافق قيود المياه، الملوحة، وكسر دورة آفات محصولك السابق.</p>
+      </div>
+
+      <div class="custom-plans-grid" id="cards"></div>
+
+      <div class="screen-card mt-24">
+        <div class="flex-between">
+          <h3 data-i18n="tl_title">📅 الجدول الزمني للتنفيذ على مدار العام (12 شهراً)</h3>
+          <select id="tlsel" class="compact-select"></select>
+        </div>
+        <div class="legend mt-12">
+          <span><i class="crop"></i><b data-i18n="leg_crop">زراعة وإنتاج</b></span>
+          <span><i class="cover"></i><b data-i18n="leg_cover">تغطية وحفظ رطوبة التربة</b></span>
+          <span><i class="pest"></i><b data-i18n="leg_pest">تجهيز وكسر آفات</b></span>
+        </div>
+        <div class="scroll mt-16"><div class="tl" id="tl"></div></div>
+      </div>
+
+      <div class="human-judgment-box mt-24">
+        <strong data-i18n="hj_title">👨‍🌾 دورك وخبرتك الحقلية أساس النجاح:</strong>
+        <p data-i18n="hj_desc">هذه التوصيات مبنية على نماذج رصد الأرض من أقمار ناسا، وهي أداة مساعدة لقرارك وليست بديلاً عن خبرتك. الأقمار الصناعية لا تقيس ملوحة التربة الحقلية (ECe) أو ملوحة مياه الآبار بدقة حقلية؛ لذا ننصح بفحص عينة تربة ومراجعة المهندس الزراعي في جمعيتك الزراعية قبل الزراعة.</p>
+      </div>
+    </section>
+
+    <!-- الشاشة 4: الخرائط الفضائية والرسوم البيانية التفسيرية -->
+    <section class="wizard-screen" id="screen-4">
+      <div class="results-header-bar">
+        <div>
+          <span class="step-tag" data-i18n="s4_tag">المختبر الجغرافي والعلمي • NASA Data Fusion</span>
+          <h2 data-i18n="s4_title">🗺️ الخرائط الفضائية التفاعلية والتحليل البياني المفسّر</h2>
+        </div>
+        <button type="button" class="btn-outline" id="back-from-science" data-i18n="btn_back_plan">
+          ➡️ العودة إلى خطتي الزراعية
+        </button>
+      </div>
+
+      <div class="screen-card">
+        <div class="flex-between">
+          <div>
+            <h3 data-i18n="map_interactive_title">🌍 خريطة مصر الزراعية (أقمار صناعية + بيانات ناسا للمحافظات الـ 14)</h3>
+            <p class="muted-sm" data-i18n="map_interactive_sub">انقر على أي محافظة لعرض قراءاتها الفضائية أو اختيارها كأرضك، وبدّل بين نوع الخريطة وطبقات الرصد.</p>
+          </div>
+          <div class="map-controls-col">
+            <div class="layer-switcher" id="basemap-btns">
+              <button type="button" class="layer-btn active" data-basemap="satellite" data-i18n="bm_sat">🛰️ قمر صناعي (أراضٍ زراعية)</button>
+              <button type="button" class="layer-btn" data-basemap="street" data-i18n="bm_str">🗺️ خريطة الحدود والمدن</button>
+            </div>
+            <div class="layer-switcher mt-8" id="map-layer-btns">
+              <button type="button" class="layer-btn active" data-layer="moisture" data-i18n="ly_sm">💧 رطوبة التربة</button>
+              <button type="button" class="layer-btn" data-layer="heat" data-i18n="ly_heat">🔥 الإجهاد الحراري</button>
+              <button type="button" class="layer-btn" data-layer="salinity" data-i18n="ly_sal">🧂 خطر التملح</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="egypt-leaflet-map" class="leaflet-box mt-16"></div>
+        <div class="map-legend-bar mt-12" id="map-legend-bar"></div>
+      </div>
+
+      <div class="charts-stack mt-24">
+        <div class="screen-card">
+          <div class="flex-between">
+            <div>
+              <h3 data-i18n="ch1_title">📈 1. المسار التاريخي من أقمار ناسا والتنبؤ للموسم القادم</h3>
+              <p class="muted-sm">مقارنة الرصد الفعلي السابق بالتوقعات المستقبلية ونطاق الثقة لمحافظتك</p>
+            </div>
+            <select id="var" class="mini-select"></select>
+          </div>
+          <div class="chart-canvas-lg"><canvas id="chart-forecast"></canvas></div>
+          <div class="chart-insight-box" id="insight-forecast"></div>
+        </div>
+
+        <div class="charts-2-grid">
+          <div class="screen-card">
+            <h3 data-i18n="ch2_title">🕸️ 2. مقارنة التوازن بين خطتك المخصصة والدورة التقليدية</h3>
+            <div class="chart-canvas-md"><canvas id="chart-radar"></canvas></div>
+            <div class="chart-insight-box" id="insight-radar"></div>
+          </div>
+
+          <div class="screen-card">
+            <h3 data-i18n="ch3_title">🌧️ 3. فجوة المياه: التبخر النتحي (ET0) مقابل الأمطار</h3>
+            <div class="chart-canvas-md"><canvas id="chart-waterbal"></canvas></div>
+            <div class="chart-insight-box" id="insight-waterbal"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="science-grid mt-24">
+        <div class="screen-card">
+          <h3 data-i18n="sci1_t">🛰️ 1. دمج بيانات الأقمار الصناعية (Multi-Sensor Data Fusion)</h3>
+          <p data-i18n="sci1_p">لحل اختلاف الدقة المكانية والزمنية بين المستشعرات، قمنا بمواءمة البيانات على شبكة تحليل موحدة لكل محافظة (14 منطقة، 2016–2025): دمج رطوبة التربة السطحية والجذرية (SMAP & ERA5-Land)، حرارة السطح والإشعاع (NASA POWER & ECOSTRESS)، الهطول (GPM)، الكتلة الحيوية والغطاء النباتي (MODIS NDVI & GEDI)، وخصائص التربة (SoilGrids).</p>
+        </div>
+
+        <div class="screen-card">
+          <h3 data-i18n="sci2_t">🧠 2. الذكاء الاصطناعي وتفسير عدم اليقين (SI & Uncertainty)</h3>
+          <p data-i18n="sci2_p">قارنّا نماذج إحصائية وتعلم آلي (Ridge, Random Forest, LightGBM, Gradient Boosting) وحقق Gradient Boosting أعلى دقة (R² = 87%). واستخدمنا Quantile Regression لتقدير نطاق عدم اليقين (± m³/m³)، مع إبراز الفترات الانتقالية بين المواسم والأراضي البور التي ترتفع فيها مخاطر التبخر.</p>
+        </div>
+
+        <div class="screen-card">
+          <h3 data-i18n="sci3_t">📡 3. الفرق بين القمر الصناعي والقياس الأرضي</h3>
+          <p data-i18n="sci3_p">تغطي الأقمار الصناعية مساحات واسعة (كيلومترات) وتكشف الاتجاهات الإقليمية وموجات الحر مبكراً، بينما تقيس الحساسات الأرضية وتحاليل المعمل ظروف حقلك بدقة مترية (مثل ملوحة التربة ECe). الجمع بينهما يمنحك إنذاراً مبكراً ودقة تنفيذية.</p>
+        </div>
+
+        <div class="screen-card">
+          <h3 data-i18n="sci4_t">🌿 4. لماذا تنجح الدورة الزراعية المتنوعة؟</h3>
+          <p data-i18n="sci4_p">البقوليات (فول/برسيم/لوبيا): تثبّت النيتروجين الجوي وتغني التربة. المحاصيل عميقة الجذور (سورغم/عباد شمس): تفكك الطبقات المتماسكة وتصل للرطوبة العميقة. محاصيل التغطية: تقلل التبخر وتحمي التربة من التعرية.</p>
+        </div>
+      </div>
+
+      <div class="screen-card mt-24">
+        <div class="flex-between">
+          <h3 data-i18n="db_51_title">📚 قاعدة بيانات الـ 51 محصولاً المصري الموثقة</h3>
+          <input type="text" id="crop-search" class="compact-select" placeholder="🔍 ابحث باسم المحصول أو العائلة أو الموسم..." />
+        </div>
+        <div class="scroll table-box mt-16">
+          <table id="crops"></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ورقة الطباعة الرسمية PDF -->
+    <section id="print-sheet" class="print-only"></section>
+  </main>
+
+  <!-- =======================================================================
+       المساعد الزراعي الذكي: المهندس رَيّان (Rayan AI)
+       ======================================================================= -->
+  <button id="help-launcher" class="rayan-launcher" type="button" aria-label="المهندس رَيّان - المستشار الزراعي الذكي" aria-expanded="false">
+    <div class="rayan-avatar-ring">
+      <img
+        src="assets/rayan-avatar.png"
+        alt="المهندس رَيّان"
+        class="rayan-avatar-img"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
+      />
+      <svg style="display:none;" viewBox="0 0 80 80" width="38" height="38" fill="none">
+        <circle cx="40" cy="40" r="38" fill="#dcfce7"/>
+        <path d="M16 74c3-14 14-20 24-20s21 6 24 20" fill="#15803d"/>
+        <circle cx="40" cy="34" r="14" fill="#fde68a"/>
+        <path d="M24 30c2-11 30-11 32 0" fill="#166534"/>
+        <rect x="21" y="27" width="38" height="5.5" rx="2.7" fill="#22c55e"/>
+        <circle cx="35" cy="34.5" r="2" fill="#12261b"/>
+        <circle cx="45" cy="34.5" r="2" fill="#12261b"/>
+        <path d="M35.5 40.5c2.8 2.8 6.2 2.8 9 0" stroke="#12261b" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+      <span class="online-dot"></span>
+    </div>
+    <div class="launcher-text">
+      <strong data-i18n="bot_btn">اسأل المهندس رَيّان</strong>
+      <small>مستشار ذكي • صوت وكتابة</small>
+    </div>
+  </button>
+
+  <section id="help-panel" class="rayan-panel" hidden>
+    <header class="rayan-header">
+      <div class="rayan-profile">
+        <div class="rayan-header-avatar">
+          <img
+            src="assets/rayan-avatar.png"
+            alt="المهندس رَيّان"
+            class="rayan-avatar-img"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block';"
+          />
+          <svg style="display:none;" viewBox="0 0 80 80" width="46" height="46" fill="none">
+            <circle cx="40" cy="40" r="38" fill="#ffffff"/>
+            <path d="M16 74c3-14 14-20 24-20s21 6 24 20" fill="#15803d"/>
+            <circle cx="40" cy="34" r="14" fill="#fde68a"/>
+            <path d="M24 30c2-11 30-11 32 0" fill="#166534"/>
+            <rect x="21" y="27" width="38" height="5.5" rx="2.7" fill="#22c55e"/>
+            <circle cx="35" cy="34.5" r="2" fill="#12261b"/>
+            <circle cx="45" cy="34.5" r="2" fill="#12261b"/>
+            <path d="M35.5 40.5c2.8 2.8 6.2 2.8 9 0" stroke="#12261b" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+          <span class="online-dot"></span>
+        </div>
+        <div>
+          <h4 data-i18n="bot_title">المهندس رَيّان • Rayan AI</h4>
+          <span id="ai-mode-badge">🟢 متصل تلقائياً ببيانات ناسا والـ 51 محصولاً</span>
+        </div>
+      </div>
+      <div class="rayan-header-actions">
+        <button id="auto-tts-toggle" class="rayan-icon-btn" type="button" title="تفعيل/إيقاف القراءة الصوتية التلقائية">🔇</button>
+        <button id="clear-chat-btn" class="rayan-icon-btn" type="button" title="محادثة جديدة">🗑️</button>
+        <button id="help-close" class="rayan-icon-btn" type="button" aria-label="إغلاق">✕</button>
+      </div>
+    </header>
+
+    <div id="help-messages" class="rayan-messages">
+      <div class="rayan-msg bot">
+        <div class="msg-bubble">
+          أهلاً بك يا هندسة / يا حاج 🌾 أنا <b>المهندس رَيّان</b>، مستشارك الزراعي الذكي في منصة <b>GREEN FUTURE</b>.<br>
+          أنا متصل الآن مباشرة ببيانات محافظتك، مساحتك، وقاعدة الـ 51 محصولاً. اسألني أي سؤال بحرية أو اضغط <b>🎤</b> وتحدث بصوتك!
+        </div>
+      </div>
+      <div class="rayan-chips" id="help-quick">
+        <button type="button" data-question="قارن بين الفول والبرسيم من حيث المياه والنيتروجين والملوحة">⚖️ مقارنة الفول والبرسيم</button>
+        <button type="button" data-question="اشرح لي خطتي الزراعية الحالية بالتفصيل ولماذا هي الأنسب؟">📊 تحليل خطتي الحالية</button>
+        <button type="button" data-question="ما أفضل المحاصيل للأراضي المالحة ونقص المياه؟">🧂 محاصيل تتحمل الملوحة</button>
+        <button type="button" data-question="أعطني جدول ري وتسميد مقترح لأرضي هذا الموسم">💧 جدول الري والتسميد</button>
+      </div>
+    </div>
+
+    <div id="voice-status" class="rayan-voice-bar" hidden>
+      <span class="wave-bars"><i></i><i></i><i></i><i></i></span>
+      <span>جاري الاستماع لصوتك... تحدث الآن</span>
+    </div>
+
+    <form id="help-form" class="rayan-footer">
+      <button type="button" id="voice-mic-btn" class="rayan-mic-btn" title="تحدث بصوتك">🎤</button>
+      <input id="help-input" type="text" maxlength="600" autocomplete="off" placeholder="اكتب سؤالك للمهندس رَيّان أو اضغط 🎤..." />
+      <button type="submit" class="rayan-send-btn" title="إرسال">➤</button>
+    </form>
+  </section>
+
+  <!-- محرك الصوت العربي الاحترافي + سكريبت المنصة -->
+  <script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE" defer></script>
+  <script src="app.js"></script>
 </body>
 </html>
